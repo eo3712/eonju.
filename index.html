@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>취미스팟 - 나만의 취미 찾기</title>
+  <style>
+    :root {
+      --bg-color: #f7f5f0;
+      --card-bg: #ffffff;
+      --primary-color: #6c5ce7;
+      --text-color: #2d3436;
+      --accent-color: #8e7cc3;
+      --border-color: #e2ded8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 450px;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      color: var(--text-color);
+      margin-bottom: 8px;
+    }
+
+    .icons {
+      font-size: 20px;
+      letter-spacing: 5px;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+
+    header p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .step-card {
+      display: none;
+    }
+
+    .step-card.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: #faf9f6;
+      font-size: 15px;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    .range-group {
+      margin-bottom: 25px;
+    }
+
+    .range-group input {
+      width: 100%;
+      accent-color: var(--accent-color);
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #7965b2;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .score-badge {
+      display: inline-block;
+      background-color: #f0edfa;
+      color: var(--primary-color);
+      font-weight: bold;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .hobby-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .hobby-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 25px;
+      word-break: keep-all;
+    }
+
+    .reset-btn {
+      background-color: #e2ded8;
+      color: #333;
+    }
+
+    .reset-btn:hover {
+      background-color: #d3ce8a;
+    }
+
+    /* STEP 3 선택상자와 버튼 간격 통일 */
+    #interestSelect {
+      margin-bottom: 25px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="icons">🧶✏️💻📖</div>
+    <h1>취미스팟</h1>
+    <p>오늘 나의 조건에 꼭 맞는 맞춤형 취미를 찾아보세요.</p>
+  </header>
+
+  <!-- STEP 1: 오늘 나의 여유 시간 -->
+  <div class="step-card active" id="step1">
+    <label>STEP 1. 오늘 나의 여유 시간</label>
+    <input type="number" id="hoursInput" placeholder="예: 1 (시간 단위로 입력)" min="0" step="any">
+    <input type="number" id="minutesInput" placeholder="예: 60 (분 단위로 입력)" min="0" step="any">
+    <button onclick="nextStep(2)">다음으로</button>
+  </div>
+
+  <!-- STEP 2: 오늘 나의 컨디션 -->
+  <div class="step-card" id="step2">
+    <label for="conditionInput">STEP 2. 오늘 나의 컨디션</label>
+    <div class="range-group">
+      <input type="range" id="conditionInput" min="1" max="5" value="3">
+      <div class="range-labels">
+        <span>1 (매우 피곤함)</span>
+        <span>3 (보통)</span>
+        <span>5 (에너지 넘침)</span>
+      </div>
+    </div>
+    <button onclick="nextStep(3)">다음으로</button>
+  </div>
+
+  <!-- STEP 3: 평소 관심 있는 분야 -->
+  <div class="step-card" id="step3">
+    <label for="interestSelect">STEP 3. 평소 관심 있는 분야</label>
+    <select id="interestSelect">
+      <option value="culture">문화 & 예술 및 창작</option>
+      <option value="sports">운동 및 신체활동</option>
+      <option value="growth">자기계발 및 지적 활동</option>
+      <option value="plants">수집 및 가꾸기</option>
+      <option value="food">미식 및 미용</option>
+    </select>
+    <button onclick="calculateHobby()">나만의 취미 분석하기</button>
+  </div>
+
+  <!-- STEP 4: AI/알고리즘 분석 결과 -->
+  <div class="step-card" id="step4">
+    <div class="result-box">
+      <div class="score-badge" id="scoreBadge">적합도 점수 0점</div>
+      <div class="hobby-title" id="hobbyResult">-</div>
+      <p class="hobby-desc" id="hobbyDesc">-</p>
+      <button class="reset-btn" onclick="resetForm()">다시 추천받기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 취미 데이터베이스
+  const hobbyData = {
+    "컬러링": {
+      category: "culture",
+      minTime: 30,
+      reqCondition: 2,
+      desc: "색연필로 도안을 채워나가며 마음의 정적과 안정을 얻을 수 있는 창작 활동입니다. 오늘처럼 차분한 시간에 집중해 보세요."
+    },
+    "조깅": {
+      category: "sports",
+      minTime: 40,
+      reqCondition: 5,
+      desc: "가벼운 러닝화를 신어보고 밖으로 나가 숨을 쉬어보세요. 신체 에너지를 순환시키고 머리를 맑게 해주는데 최적의 활동입니다."
+    },
+    "독서": {
+      category: "growth",
+      minTime: 30,
+      reqCondition: 2,
+      desc: "조용한 공간에서 책 한 권을 펼쳐 새로운 세계를 탐험해 보세요. 지적 호기심을 충족하고 생각을 정리하는 시간이 됩니다."
+    },
+    "반려식물 키우기": {
+      category: "plants",
+      minTime: 20,
+      reqCondition: 3,
+      desc: "식물의 잎 상태를 살피고 흙에 물을 주며 교감해 보세요. 일상 속 소소하지만 확실한 치유를 안겨주는 취미입니다."
+    },
+    "핑거푸드 만들기": {
+      category: "food",
+      minTime: 45,
+      reqCondition: 4,
+      desc: "간단하면서도 한 눈에 보기 좋은 미식을 직접 만들어 보세요. 요리의 즐거움과 미각적 만족을 동시에 누릴 수 있습니다."
+    }
+  };
+
+  function nextStep(stepNumber) {
+    if (stepNumber === 2) {
+      const hours = parseFloat(document.getElementById('hoursInput').value) || 0;
+      const minutes = parseFloat(document.getElementById('minutesInput').value) || 0;
+      
+      if (hours <= 0 && minutes <= 0) {
+        alert("여유 시간을 올바르게 입력해 주세요.");
+        return;
+      }
+    }
+
+    document.querySelectorAll('.step-card').forEach(card => card.classList.remove('active'));
+    document.getElementById(`step${stepNumber}`).classList.add('active');
+  }
+
+  // 알고리즘: 총점 계산 및 취미 추출
+  function calculateHobby() {
+    const hours = parseFloat(document.getElementById('hoursInput').value) || 0;
+    const minutes = parseFloat(document.getElementById('minutesInput').value) || 0;
+    
+    // 시간 + 분 합산하여 총 시간을 '분' 단위로 변환
+    const userTime = (hours * 60) + minutes;
+
+    const userCondition = parseInt(document.getElementById('conditionInput').value);
+    const userInterest = document.getElementById('interestSelect').value;
+
+    let bestHobby = "";
+    let highestScore = -1;
+
+    for (const [hobbyName, info] of Object.entries(hobbyData)) {
+      // 1. 관심사 점수 (40점)
+      let interestScore = (info.category === userInterest) ? 40 : 10;
+
+      // 2. 시간 적합성 점수 (30점)
+      let timeScore = 30;
+      if (userTime < info.minTime) {
+        timeScore = Math.max(0, 30 - (info.minTime - userTime));
+      }
+
+      // 3. 컨디션 점수 (30점)
+      let conditionDiff = Math.abs(userCondition - info.reqCondition);
+      let conditionScore = 30 - (conditionDiff * 6);
+
+      // 총점 합산 (100점 만점)
+      let totalScore = interestScore + timeScore + conditionScore;
+
+      if (totalScore > highestScore) {
+        highestScore = totalScore;
+        bestHobby = hobbyName;
+      }
+    }
+
+    // 결과 출력
+    const resultHobby = hobbyData[bestHobby];
+    document.getElementById('scoreBadge').innerText = `취미 적합도: ${highestScore}점 / 100점`;
+    document.getElementById('hobbyResult').innerText = bestHobby;
+    document.getElementById('hobbyDesc').innerText = resultHobby.desc;
+
+    nextStep(4);
+  }
+
+  function resetForm() {
+    document.getElementById('hoursInput').value = '';
+    document.getElementById('minutesInput').value = '';
+    document.getElementById('conditionInput').value = '3';
+    nextStep(1);
+  }
+</script>
+
+</body>
+</html>
